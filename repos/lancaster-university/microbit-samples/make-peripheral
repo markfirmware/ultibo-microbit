@@ -1,0 +1,12 @@
+#!/bin/bash
+
+for SAMPLENAME in source/examples/peripheral
+do
+    echo $SAMPLENAME
+    rm source/* 2> /dev/null
+    cp -a $SAMPLENAME/* source
+    ls source
+    yt clean
+    yt build
+    cp build/bbc-microbit-classic-gcc/source/microbit-samples-combined.hex hex/$(basename $SAMPLENAME).hex
+done
