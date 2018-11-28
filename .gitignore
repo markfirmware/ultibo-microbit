@@ -2,3 +2,6 @@
 *.img
 lib/
 release/
+build/
+yotta_targets/
+yotta_modules/
