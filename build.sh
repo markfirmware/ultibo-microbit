@@ -6,7 +6,17 @@ LAZDIR="$HOME/ultibo/core"
 LPINAME=$1
 MODE=$2
 
-echo $MODE
+if [[ $LPINAME == "" ]]
+then
+    LPINAME=ultibomicrobit
+fi
+
+if [[ $MODE == "" ]]
+then
+    MODE=rpi3
+fi
+
+echo $LPINAME $MODE
 rm -rf lib/
 WD=$(pwd)
 pushd $LAZDIR >& /dev/null

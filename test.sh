@@ -3,8 +3,7 @@ set -ex
 
 # on raspbian, build the program and reboot to it
 
-#./build.sh
-./buildall
+./build.sh ultibomicrobit rpi3
 
 sudo rm -rf /boot/hex
 sudo cp -r hex /boot
