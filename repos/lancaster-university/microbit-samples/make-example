@@ -1,6 +1,7 @@
 #!/bin/bash
 
-for SAMPLENAME in source/examples/peripheral
+mkdir -p hex
+for SAMPLENAME in source/examples/$1
 do
     echo $SAMPLENAME
     rm source/* 2> /dev/null

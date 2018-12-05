@@ -5,8 +5,12 @@ mkdir -p hex
 for SAMPLENAME in source/examples/*
 do
     echo $SAMPLENAME
-    rm source/* 2> /dev/null
-    cp -a $SAMPLENAME/* source
+    rm source/*.cpp 2> /dev/null
+    cp -a $SAMPLENAME/*.cpp source
+    if [[ -e $SAMPLENAME/config.json ]]
+    then
+        cp -a $SAMPLENAME/config.json .
+    fi
     ls source
     yt clean
     yt build
