@@ -153,6 +153,18 @@ begin
   Result:=ERROR_NOT_VALID;
 end;
 
+procedure WriteLnAndClear(S:String);
+begin
+ ConsoleWindowWrite(Console2,S);
+ ConsoleWindowClearEx(Console2,ConsoleWindowGetX(Console2),ConsoleWindowGetY(Console2),ConsoleWindowGetMaxX(Console2),ConsoleWindowGetY(Console2),False);
+ ConsoleWindowWriteLn(Console2,'');
+end;
+
+procedure ClearToEndOfScreen;
+begin
+ ConsoleWindowClearEx(Console2,ConsoleWindowGetMinX(Console2),ConsoleWindowGetY(Console2),ConsoleWindowGetMaxX(Console2),ConsoleWindowGetMaxY(Console2),False);
+end;
+
 var
  NoMicroBitsAttached:Boolean;
 
@@ -198,9 +210,15 @@ begin
        if SerialDevice <> Nil then
         SerialDeviceName:=SerialDevice^.Device.DeviceName;
       end;
-     ConsoleWindowWriteLn(Console2,Format('Micro:Bit on connector %d disk drive %s serial device %s',[ConnectorNumber,DriveLetter,SerialDeviceName]));
-     ConsoleWindowWriteLn(Console2,Format('    copy \hex\peripheral.hex %s',[DriveLetter]));
-     ConsoleWindowWriteLn(Console2,'');
+     WriteLnAndClear(Format('Micro:Bit on connector %d disk drive %s serial device %s',[ConnectorNumber,DriveLetter,SerialDeviceName]));
+     WriteLnAndClear('To update the peripheral.hex program on the Micro:Bit enter the following line in the shell:');
+     WriteLnAndClear('');
+     WriteLnAndClear(Format('    C:\>copy microbit-hex\peripheral.hex %s',[DriveLetter]));
+     WriteLnAndClear('');
+     WriteLnAndClear('This will take up to 30 seconds - the LED on the back of the Micro:Bit will flash during this time ...');
+     WriteLnAndClear(' When finished, the microbit will then display a dot on the LED matrix moving from right to left ...');
+     WriteLnAndClear(' A periodic clock message from the microbit will also be printed in the window below');
+     WriteLnAndClear('');
     end;
 // ConsoleWindowWriteLn(Console2,Format('[%d] %04.4x:%04.4x %s %d.%d %s %s %s %s',[ConnectorNumber,Descriptor^.idVendor,Descriptor^.idProduct,Host^.Device.DeviceName,Depth,PortNumber,Device.DeviceName,Product,Manufacturer,SerialNumber]));
   end;
@@ -214,14 +232,18 @@ begin
  Result:=0;
  while True do
   begin
-   ConsoleWindowClear(Console2);
-   ConsoleWindowWriteLn(Console2,'The shell is at the right');
-   ConsoleWindowWriteLn(Console2,'    dir \hex');
-   ConsoleWindowWriteLn(Console2,'');
+   ConsoleWindowSetXY(Console2,1,1);
+   WriteLnAndClear('The shell is at the right ...');
+   WriteLnAndClear('To see what programs are available to load into the Micro:Bit, enter:');
+   WriteLnAndClear('    C:\>dir microbit-hex');
+   WriteLnAndClear('');
+   WriteLnAndClear('The peripheral.hex program is designed to work with ultibo');
+   WriteLnAndClear('');
    NoMicroBitsAttached:=True;
    USBDeviceEnumerate(@UsbDeviceEnumeration,Nil);
    if NoMicroBitsAttached then
-    ConsoleWindowWriteLn(Console2,'There are no Micro:Bits attached');
+    WriteLnAndClear('There are no Micro:Bits attached - attach one or more using a usb cable for each one');
+   ClearToEndOfScreen;
    Sleep(1*1000);
   end;
 end;
@@ -278,9 +300,29 @@ begin
   end;
 end;
 
+procedure DisplayConsoleShellPrompt;
+var
+ CurrentShell:TConsoleShell;
+begin
+ while not DirectoryExists('C:\') do
+  Sleep(10);
+ //Find the shell for the default console 
+ CurrentShell:=ConsoleShellFindByDevice(ConsoleDeviceGetDefault);
+ if CurrentShell <> nil then
+  begin
+   //Send a change directory command to the default session (Only session currently)
+   CurrentShell.ProcessCommand(CurrentShell.DefaultSession, 'cd c:\');
+   //Update the prompt
+   CurrentShell.DoPrompt(CurrentShell.DefaultSession);
+   //Reset the session state
+   CurrentShell.DoReset(CurrentShell.DefaultSession);
+  end;
+end;
+
 begin
  StartLogging;
  RestoreBootFile('default','config.txt');
+ DisplayConsoleShellPrompt;
  Console1:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMLEFT,True);
  Console2:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_TOPLEFT,True);
  for I:=Low(MicroBits) to High(MicroBits) do

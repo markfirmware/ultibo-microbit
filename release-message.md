@@ -22,5 +22,4 @@
 # Operation:
 * with the raspberry pi
     * attach the microbit to the raspberry pi with the usb cable
-    * the microbit should appear as a drive
-    * copy hex/peripheral.hex from the sd card to the microbit usb folder
+    * there will be instructions on screen for copying a new program to the micro:bit and what to expect when that program is loaded

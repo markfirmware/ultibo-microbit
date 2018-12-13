@@ -12,7 +12,7 @@ int main()
     {
         uBit.sleep(1*1000);
         serial.printf("{\"clock\":%d}\n", uBit.systemTime() / 1000);
-        uBit.display.scrollAsync("!", 100);
+        uBit.display.scrollAsync(".", 100);
     }
     release_fiber();
 }
